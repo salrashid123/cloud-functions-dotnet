@@ -25,16 +25,18 @@ Optionally, you can also install dotnet 2.0.0+ on the workstation to build and r
 
 ## Makefile
 
-- all: builds everything including function.zip file to deploy to GCF
-- run: build and run the core .NET executeable for the local platform
-- bin_from_local: builds the .NET executeable specifically for ubuntu.14.04-x64 binary to bin/mainapp.
-- bin_from_container:  builds the .NET executable file (bin/mainapp) within a container and copies out the bin/ folder
-- lib: copies the .so files required by dotnet to the lib/ folder
-- node_modules: Builds the node_module/ folder and execer.cc binary
-- test_with_container: build and run everything within a container.  Note, [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials) will not work 
-unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_ env variable plus json cert file (shown in the Makefile)
-- test_with_local_node: launches the node test webapp on :8080 and then passes the file descriptors to .NET via local_modules/execer/execer.cc
-- clean: deletes all generated files
+| Rule  | Action |
+| ------------- | ------------- |
+| all  | builds everything including function.zip file to deploy to GCF  |
+| run  | build and run the core .NET executeable for the **local** platform  |
+| zip  | makes functions.zip without a full rebuild (assumes 'make all' has been run earlier)   |
+| bin_from_local  | builds the .NET executeable specifically for ubuntu.14.04-x64 and copies the binary to bin/mainapp.  |
+| bin_from_container  | builds the .NET executable file (bin/mainapp) within a container and copies out the bin/ folder  |
+| lib  | copies the .so files required by dotnet to the lib/ folder  |
+| node\_modules  | Builds the node_module/ folder and execer.cc binary  |
+| test_with_container  | build and run everything within a container.   |
+| test_with_local_node  | launches the node test webapp on :8080 and then passes the file descriptors to .NET via local_modules/execer/execer.cc  |
+| clean  | deletes all generated files  |
 
 Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip|)
 
@@ -64,19 +66,23 @@ dotnet restore
 dotnet run
 ```
 
-To simulate deployment and the nodeJS module passing control,
+To simulate deployment and the nodeJS module passing control, run
 
 ```
 $ make test_with_container
 ```
 
 which does the following:
+
 1. Runs temp container to acquire the .so files needed for .NET and copies them to lib/
 2. Runs temp container to build the .NET executable and copies them to bin/
 3. Runs temp container to build node\_modules and copies them to the hosts node_modules/ folder
 4. Launches node webserver within a container and listens on :8080
 5. Passes the socket file descriptors from node to .NET
 6. .NET takes over the sockets from Node.
+
+> Note: [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials) will not work 
+unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_ env variable plus the json certificte file (shown in the Makefile)
 
 ## Deploying
 
