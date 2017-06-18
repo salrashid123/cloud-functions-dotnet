@@ -1,0 +1,20 @@
+FROM debian:jessie
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        libc6 \
+        libcurl3 \
+        libgcc1 \
+        libgssapi-krb5-2 \
+        libicu52 \
+        liblttng-ust0 \
+        libssl1.0.0 \
+        libstdc++6 \
+        libunwind8 \
+        libuuid1 \
+        zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /user_code/lib && \
+    for i in `dpkg -L libc6 libcurl3 libgcc1 libgssapi-krb5-2 libicu52 liblttng-ust0 libssl1.0.0 libstdc++6 libunwind8 libuuid1 zlib1g  | egrep "^/usr/lib/x86_64-linux-gnu/.*\.so\."`; do cp $i /user_code/lib; done
