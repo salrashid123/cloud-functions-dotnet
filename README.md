@@ -11,10 +11,10 @@ This is a **unofficial** port to .NET of cloud-functions-go sample here:
 
 ## Prerequsites
 
-This script requires docker mulit-stage builds provided docker-ce 17.05+ at a minimum.  You can optionally compile and run the node_module if you have the 
+This script *requires* dotnet 2.0.0+ and  docker mulit-stage builds provided docker-ce 17.05+ at a minimum.  You can optionally compile and run the node_module if you have the 
 prerequsites specified in cloud-fucntions-go.
 
-Optionally, you can also install dotnet 2.0.0+ on the workstation to build and run the sample directly.  You can also run the sample within docker with dotnet-runtime.
+You can also install dotnet 2.0.0+ on the workstation to build and run the sample directly.  You can also run the sample within docker with dotnet-runtime.
 
 * docker-ce 17.05.0+
   - [https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb](https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb)
@@ -143,9 +143,7 @@ change to:
 
 ```
 
-Then in .NET, use the following Kestrel options to listen on a handler
-
-* https://github.com/aspnet/KestrelHttpServer/blob/dev/src/Microsoft.AspNetCore.Server.Kestrel.Core/KestrelServerOptions.cs
+Then in .NET, use the following [Kestrel Options](https://github.com/aspnet/KestrelHttpServer/blob/dev/src/Microsoft.AspNetCore.Server.Kestrel.Core/KestrelServerOptions.cs) to listen on a handler.
 
 
 Program.cs
