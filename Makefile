@@ -1,6 +1,6 @@
 DOTNETBIN=bin/mainapp
 
-all: node_modules lib bin_from_local
+all: node_modules lib bin_from_container
 	
 check_deploy:
 	@if ! [ -f bin/libcoreclr.so ]; then echo "Please run 'make lib' first"; exit 1; fi

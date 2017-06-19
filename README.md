@@ -11,8 +11,8 @@ This is a **unofficial** port to .NET of cloud-functions-go sample here:
 
 ## Prerequsites
 
-This script *requires* dotnet 2.0.0+ and  docker mulit-stage builds provided docker-ce 17.05+ at a minimum.  You can optionally compile and run the node_module if you have the 
-prerequsites specified in cloud-fucntions-go.
+This script *requires* dotnet 2.0.0+ and  docker mulit-stage builds provided docker-ce 17.05+ at a minimum if you intend to build and run locally.  You can optionally compile and run the node_module if you have the prerequsites specified in cloud-fucntions-go.  The defalt Makefile rule (all) builds all the components within a container so for that mode, all you need is docker 17.05+
+
 
 You can also install dotnet 2.0.0+ on the workstation to build and run the sample directly.  You can also run the sample within docker with dotnet-runtime.
 
@@ -147,7 +147,9 @@ Then in .NET, use the following [Kestrel Options](https://github.com/aspnet/Kest
 
 
 Program.cs
+
 ```csharp
+
             .UseKestrel(options =>
             {
                 try
