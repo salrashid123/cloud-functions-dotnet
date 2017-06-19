@@ -3,7 +3,7 @@
 
 _Disclaimer: This is not an official Google product. It is not and will not be maintained by Google, and is not part of Google Cloud Functions project. There is no guarantee of any kind, including that it will work or continue to work, or that it will supported in any way._
 
-Sample application running .NET Cloud Function.
+Sample application running .NET [Cloud Function](https://cloud.google.com/functions/docs/) as an [HTTP Trigger](https://cloud.google.com/functions/docs/calling/http).  
 
 This is a **unofficial** port to .NET of cloud-functions-go sample here:
 - [https://github.com/GoogleCloudPlatform/cloud-functions-go](https://github.com/GoogleCloudPlatform/cloud-functions-go)
@@ -27,9 +27,9 @@ Optionally, you can also install dotnet 2.0.0+ on the workstation to build and r
 
 | Rule  | Action |
 | ------------- | ------------- |
-| all  | builds everything including function.zip file to deploy to GCF  |
+| all  | builds everything and prepares the current folder to deploy to GCF  |
+| check_deploy  | verifies the current folder is staged for deployment  |
 | run  | build and run the core .NET executeable for the **local** platform  |
-| zip  | makes functions.zip without a full rebuild (assumes 'make all' has been run earlier)   |
 | bin_from_local  | builds the .NET executeable specifically for ubuntu.14.04-x64 and copies the binary to bin/mainapp.  |
 | bin_from_container  | builds the .NET executable file (bin/mainapp) within a container and copies out the bin/ folder  |
 | lib  | copies the .so files required by dotnet to the lib/ folder  |
@@ -38,7 +38,7 @@ Optionally, you can also install dotnet 2.0.0+ on the workstation to build and r
 | test_with_local_node  | launches the node test webapp on :8080 and then passes the file descriptors to .NET via local_modules/execer/execer.cc  |
 | clean  | deletes all generated files  |
 
-Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip|)
+Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip)
 
 ## Writing a cloud function and running locally
 
@@ -86,8 +86,15 @@ unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_
 
 ## Deploying
 
+First build all the dependencies
+
 ```
-$ make all
+make all
+```
+
+then check if all the necessary files exist to deploy
+```
+$ make check_deploy
 ```
 
 Then upload as an HTTP Trigger as described here:
@@ -95,22 +102,18 @@ Then upload as an HTTP Trigger as described here:
 - [https://cloud.google.com/functions/docs/deploying/filesystem](https://cloud.google.com/functions/docs/deploying/filesystem)
 
 ```
-gcloud beta functions deploy gcfdotnet --stage-bucket _your_staging_bucket --trigger-http
+gcloud beta functions deploy gcfdotnet --stage-bucket your_staging_bucket --trigger-http
 ```
+
+> Note:  it takes quite sometime to generate all the lib/ and node_modules/ dependencies so once they are already built using 'make all' you can
+selectively recreate the .NET binary using 'make bin_from_local' or 'make bin_from_container' and directly deploy using gcloud.
 
 ## Appendix
 
 ### Required libraries for dotnet
 
-- dotnet runtime requires the following libraries.  You can use this to install runtime support on debian without the full dotnet install
+- dotnet runtime requires the following libraries.  You can use this to install runtime support on debian without the full dotnet install [microsoft/dotnet:2.0.0-preview1-runtime-jessie](https://github.com/dotnet/dotnet-docker/blob/master/2.0/sdk/jessie/Dockerfile#L4)
 
-
-```bash
-
-https://github.com/dotnet/dotnet-docker/blob/master/2.0/sdk/jessie/Dockerfile#L4
-apt-get update && apt-get install -qqy git golang gcc npm curl vim && curl -sL https://deb.nodesource.com/setup_6.x |  bash - && apt-get install -y nodejs
-
-```
 
 ### Misc links
 
