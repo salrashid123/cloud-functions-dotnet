@@ -86,10 +86,16 @@ unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_
 
 ## Deploying
 
-First build all the dependencies
+If you have coreclr/dotnet installed locally, build all the dependencies
 
 ```
-make all
+make node_modules lib bin_from_local
+```
+
+if not, build the .NET cloud function executeable inside a container:
+
+```
+make node_modules lib bin_from_container
 ```
 
 then check if all the necessary files exist to deploy
@@ -97,7 +103,7 @@ then check if all the necessary files exist to deploy
 $ make check_deploy
 ```
 
-Then upload as an HTTP Trigger as described here:
+Finally, upload as an HTTP Trigger as described here:
 
 - [https://cloud.google.com/functions/docs/deploying/filesystem](https://cloud.google.com/functions/docs/deploying/filesystem)
 
