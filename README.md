@@ -3,44 +3,76 @@
 
 _Disclaimer: This is not an official Google product. It is not and will not be maintained by Google, and is not part of Google Cloud Functions project. There is no guarantee of any kind, including that it will work or continue to work, or that it will supported in any way._
 
-Sample application running .NET [Cloud Function](https://cloud.google.com/functions/docs/) as an [HTTP Trigger](https://cloud.google.com/functions/docs/calling/http).  
+This is a sample application running a .NET [Cloud Function](https://cloud.google.com/functions/docs/) as an [HTTP Trigger](https://cloud.google.com/functions/docs/calling/http).  
 
 This is a **unofficial** port to .NET of cloud-functions-go sample here:
 - [https://github.com/GoogleCloudPlatform/cloud-functions-go](https://github.com/GoogleCloudPlatform/cloud-functions-go)
 
+---
 
 ## Prerequsites
 
-This script *requires* dotnet 2.0.0+ and  docker mulit-stage builds provided docker-ce 17.05+ at a minimum if you intend to build and run locally.  You can optionally compile and run the node_module if you have the prerequsites specified in cloud-fucntions-go.  The defalt Makefile rule (all) builds all the components within a container so for that mode, all you need is docker 17.05+
+There are several ways you can build and run these samples:
 
+1. Build+Run entirely within [Google Cloud Shell](https://cloud.google.com/shell/docs/starting-cloud-shell).
+2. Build+Run locally with docker (requires GNU Make, docker)
+3. Develop+Build+Run locally with dotnet and docker (requires GNU Make, docker, dotnet)
 
-You can also install dotnet 2.0.0+ on the workstation to build and run the sample directly.  You can also run the sample within docker with dotnet-runtime.
+If you want to get started, just build+run within cloud shell.
 
-* docker-ce 17.05.0+
-  - [https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb](https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb)
-* dotnet 2.0.0-preview1
-  - Either install or use binaries:
-  - [https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-preview1-download.mdg](https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-preview1-download.mdg)
+Note, the .NET cloud function application must target dotnet 2.0.0-preview1+ (previous versions of dotnet does not include the required Kestrel webserver options)
 
+- [docker-ce 17.05.0+](https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb)
 
-## Makefile
+- [dotnet 2.0.0-preview1](https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-preview1-download.md)
 
-| Rule  | Action |
-| ------------- | ------------- |
-| all  | builds everything and prepares the current folder to deploy to GCF  |
-| check_deploy  | verifies the current folder is staged for deployment  |
-| run  | build and run the core .NET executeable for the **local** platform  |
-| bin_from_local  | builds the .NET executeable specifically for ubuntu.14.04-x64 and copies the binary to bin/mainapp.  |
-| bin_from_container  | builds the .NET executable file (bin/mainapp) within a container and copies out the bin/ folder  |
-| lib  | copies the .so files required by dotnet to the lib/ folder  |
-| node\_modules  | Builds the node_module/ folder and execer.cc binary  |
-| test_with_container  | build and run everything within a container.   |
-| test_with_local_node  | launches the node test webapp on :8080 and then passes the file descriptors to .NET via local_modules/execer/execer.cc  |
-| clean  | deletes all generated files  |
+- [GNU Make](https://www.gnu.org/software/make/)
 
-Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip)
+    - on windows: [MinGW](http://www.mingw.org/) or [Cygwin](https://www.cygwin.com/install.html) 
+
+---
+
+## Quickstart:  Build+Run with Cloud Shell
+
+This is the easiest way to try this out.  
+
+1. [Enable Cloud Functions API](https://cloud.google.com/functions/docs/quickstart) on your project.
+2. Open up [Cloud Shell](https://cloud.google.com/shell/docs/starting-cloud-shell)
+    install docker-ce:
+
+    ```
+    sudo su -
+    wget https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb
+    dpkg -i docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb
+    service docker restart
+    exit
+    docker --version
+    ```
+
+3. Get the repo
+```
+git clone https://github.com/salrashid123/cloud-functions-dotnet.git
+```
+4. Build and stage the files (this will take sometime)
+```
+make all
+make check_deploy
+```
+5. Deploy
+Remember to specify the staging GCS bucket.
+```
+gcloud beta functions deploy gcfdotnet --stage-bucket your_staging_bucket --trigger-http
+```
+6. Verify Deployment by invoking the endpoint URL (this may take sometime to initialize first time ~mins)
+```
+curl -v https://us-central1-your_project.cloudfunctions.net/gcfdotnet
+```
+
+---
 
 ## Writing a cloud function and running locally
+
+For this mode, you need to have dotnet, docker and gnu make as described above.
 
 Edit Startup.cs file to add on your HTTP Trigger function to the following endpoint:
 
@@ -59,7 +91,7 @@ Startup.cs
         }  
 ```
 
-then run the dotnet application as normal:
+then run the dotnet application as normal (note, you *must* target 2.0.0-preview1+):
 
 ```
 dotnet restore
@@ -83,6 +115,8 @@ which does the following:
 
 > Note: [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials) will not work 
 unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_ env variable plus the json certificte file (shown in the Makefile)
+
+---
 
 ## Deploying
 
@@ -114,7 +148,39 @@ gcloud beta functions deploy gcfdotnet --stage-bucket your_staging_bucket --trig
 > Note:  it takes quite sometime to generate all the lib/ and node_modules/ dependencies so once they are already built using 'make all' you can
 selectively recreate the .NET binary using 'make bin_from_local' or 'make bin_from_container' and directly deploy using gcloud.
 
+---
+
 ## Appendix
+
+
+### Makefile
+
+The build system for this cloud function uses GNU Make to generate the required files and to also compile.
+
+Makefile rules basically does the following:
+
+1. Launch a docker container to compile and generate the Cloud Function .NET binary
+2. Launch a docker container to download the linux shared_objects (.so) required by coreCLR.
+3. Launch a docker container generate the node_modules/ required by NodeJS to delegate control to .NET
+
+In each of the steps above, the required files are _copied out of the container_ to the local filesystem.  Once its on the
+local filesystem, you can upload that directly to GCF.
+
+| Rule  | Action |
+| ------------- | ------------- |
+| all  | builds everything and prepares the current folder to deploy to GCF  |
+| check_deploy  | verifies the current folder is staged for deployment  |
+| run  | build and run the core .NET executeable for the **local** platform  |
+| bin_from_local  | builds the .NET executeable specifically for ubuntu.14.04-x64 and copies the binary to bin/mainapp.  |
+| bin_from_container  | builds the .NET executable file (bin/mainapp) within a container and copies out the bin/ folder  |
+| lib  | copies the .so files required by dotnet to the lib/ folder  |
+| node\_modules  | Builds the node_module/ folder and execer.cc binary  |
+| test_with_container  | build and run everything within a container.   |
+| test_with_local_node  | launches the node test webapp on :8080 and then passes the file descriptors to .NET via local_modules/execer/execer.cc  |
+| clean  | deletes all generated files  |
+
+Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip)
+
 
 ### Required libraries for dotnet
 
@@ -123,7 +189,11 @@ selectively recreate the .NET binary using 'make bin_from_local' or 'make bin_fr
 
 ### Misc links
 
-The following snippets and links describes how control transfer for the socket file descriptors takes place from node->cpp->.NET
+The following snippets and links describes how control transfer for the socket file descriptors takes place from 
+
+```
+node -> cpp -> .NET
+```
 
 Acquire the file descriptors here by modifying the following to pass in LD\_LIBRARY_PATH environment variables:
 
