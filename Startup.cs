@@ -8,7 +8,7 @@ namespace ConsoleApplication {
     public class Startup {
 
         private static ILogger _logger;
-        private static void Req(IApplicationBuilder app)
+        private static void Execute(IApplicationBuilder app)
         { 
             app.Run(async context =>
             {   
@@ -39,7 +39,7 @@ namespace ConsoleApplication {
            app.Map("/start", Ready);   
            app.Map("/check", Ready);
            app.Map("/init", Init);
-           app.Map("/req", Req);
+           app.Map("/execute", Execute);           
         }
     }
 }

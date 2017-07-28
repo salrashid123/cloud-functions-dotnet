@@ -55,6 +55,7 @@ git clone https://github.com/salrashid123/cloud-functions-dotnet.git
 ```
 4. Build and stage the files (this will take sometime)
 ```
+cd cloud-functions-dotnet
 make all
 make check_deploy
 ```
@@ -81,7 +82,7 @@ Startup.cs
 
 ```csharp
 
-        private static void Req(IApplicationBuilder app)
+        private static void Execute(IApplicationBuilder app)
         { 
             app.Run(async context =>
             {   
