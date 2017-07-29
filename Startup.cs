@@ -17,7 +17,7 @@ namespace ConsoleApplication {
             });
         }        
 
-        private static void Ready(IApplicationBuilder app)
+        private static void Load(IApplicationBuilder app)
         {
             app.Run(async context =>
             {
@@ -25,7 +25,7 @@ namespace ConsoleApplication {
             });
         }
 
-        private static void Init(IApplicationBuilder app)
+        private static void Check(IApplicationBuilder app)
         {
             app.Run(async context =>
             {
@@ -36,9 +36,8 @@ namespace ConsoleApplication {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,  ILoggerFactory loggerFactory)
         {       
            _logger = loggerFactory.CreateLogger<Startup>(); 
-           app.Map("/start", Ready);   
-           app.Map("/check", Ready);
-           app.Map("/init", Init);
+           app.Map("/load", Load);   
+           app.Map("/check", Check);
            app.Map("/execute", Execute);           
         }
     }

@@ -44,9 +44,11 @@ This is the easiest way to try this out.
     sudo su -
     wget https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb
     dpkg -i docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb
+    (press Y, when prompted)
     service docker restart
     exit
     docker --version
+      Docker version 17.05.0-ce, build 89658be
     ```
 
 3. Get the repo
