@@ -20,15 +20,15 @@ There are several ways you can build and run these samples:
 
 If you want to get started, just build+run within cloud shell.
 
-Note, the .NET cloud function application must target dotnet 2.0.0-preview1+ (previous versions of dotnet does not include the required Kestrel webserver options)
+Note, the .NET cloud function application must target dotnet 2.0.0 (previous versions of dotnet does not include the required Kestrel webserver options)
 
 - [docker-ce 17.05.0+](https://download.docker.com/linux/debian/dists/jessie/pool/edge/amd64/docker-ce_17.05.0~ce-0~debian-jessie_amd64.deb)
 
-- [dotnet 2.0.0-preview1](https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-preview1-download.md)
+- [dotnet 2.0.0](https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-download.md)
 
 - [GNU Make](https://www.gnu.org/software/make/)
 
-    - on windows: [MinGW](http://www.mingw.org/) or [Cygwin](https://www.cygwin.com/install.html) 
+    - on windows: [MinGW](http://www.mingw.org/) or [Cygwin](https://www.cygwin.com/install.html)
 
 ---
 
@@ -85,7 +85,7 @@ Startup.cs
 ```csharp
 
         private static void Execute(IApplicationBuilder app)
-        { 
+        {
             app.Run(async context =>
             {   
                 _logger.LogInformation("HTTP handler called..");  
@@ -94,7 +94,7 @@ Startup.cs
         }  
 ```
 
-then run the dotnet application as normal (note, you *must* target 2.0.0-preview1+):
+then run the dotnet application as normal (note, you *must* target 2.0.0):
 
 ```
 dotnet restore
@@ -116,7 +116,7 @@ which does the following:
 5. Passes the socket file descriptors from node to .NET
 6. .NET takes over the sockets from Node.
 
-> Note: [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials) will not work 
+> Note: [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials) will not work
 unless you pass though GOOGLE_CLOUD_PROJECT and _GOOGLE_APPLICATION_CREDENTIALS_ env variable plus the json certificte file (shown in the Makefile)
 
 ---
@@ -187,12 +187,12 @@ Recommended to use [Cygwin](https://www.cygwin.com/) on windows with (make|zip)
 
 ### Required libraries for dotnet
 
-- dotnet runtime requires the following libraries.  You can use this to install runtime support on debian without the full dotnet install [microsoft/dotnet:2.0.0-preview1-runtime-jessie](https://github.com/dotnet/dotnet-docker/blob/master/2.0/sdk/jessie/Dockerfile#L4)
+- dotnet runtime requires the following libraries.  You can use this to install runtime support on debian without the full dotnet install [microsoft/dotnet:2.0.0-runtime-jessie](https://github.com/dotnet/dotnet-docker/blob/master/2.0/sdk/jessie/Dockerfile#L4)
 
 
 ### Misc links
 
-The following snippets and links describes how control transfer for the socket file descriptors takes place from 
+The following snippets and links describes how control transfer for the socket file descriptors takes place from
 
 ```
 node -> cpp -> .NET
@@ -237,7 +237,7 @@ Program.cs
                             logger.LogDebug("Using LD_LIBRARY_PATH: " + env_var);
                             logger.LogDebug("Setting kestrel ListenHandler to fd >>>>>>>> " + fds);
                             ulong fd = Convert.ToUInt64(fds);
-                            options.ListenHandle(fd); 
+                            options.ListenHandle(fd);
                             break;                     
                         }                      
                     }       

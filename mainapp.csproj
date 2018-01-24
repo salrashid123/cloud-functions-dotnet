@@ -6,8 +6,8 @@
     <AssemblyName>mainapp</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>mainapp</PackageId>
-    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <RuntimeFrameworkVersion>2.0.0-preview1-002111-00</RuntimeFrameworkVersion>
+    <AssetTargetFallback>$(AssetTargetFallback);dnxcore50</AssetTargetFallback>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <RuntimeIdentifiers>ubuntu.14.04-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
