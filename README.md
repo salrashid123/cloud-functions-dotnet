@@ -12,9 +12,10 @@ This is a **unofficial** port to .NET of cloud-functions-go sample here:
 
 ## Prerequsites
 
-There are several ways you can build and run these samples but all you really need is docker 17+
+There are several ways you can build and run these samples but all you really need is docker 17
 
-However, if you have dotnet SDK installed, it'll become easier to develop and test.
+If you have dotnet SDK installed, it'll become easier to develop and test.
+
 ---
 
 ## Quickstart:  Build+Run with Cloud Shell
@@ -40,7 +41,7 @@ docker 17+, node and dotnet2.0+
 ```
 
 5. Deploy
-Remember to specify the staging GCS bucket.
+Remember to specify a staging GCS bucket (any bucket you have read-write permissions).
 ```
      gcloud beta functions deploy gcfdotnet --stage-bucket your_staging_bucket --trigger-http
 ```
@@ -52,7 +53,7 @@ Remember to specify the staging GCS bucket.
 Thats it!  The following section describes how this works and how to build if you have dotnet locally
 
 This sample uses Docker [multi-stage builds](https://medium.com/@salmaan.rashid/multi-stage-docker-builds-with-net-ef66fc98b51d) compile nodeJS mdoules
-and dotnet, then finally acquire the requisite linux shared_objects to run on Linux.   Once all those files are ready within the container,  the last Set
+and dotnet, then finally acquire the requisite linux shared_objects to run on Linux.   Once all those files are ready within the container,  the last set
 of steps 'copies' them out of the container so you can deploy the function directly.
 
 Note, if you build the full Default dockerfile, you can execute the container since
@@ -128,12 +129,23 @@ COPY --from=build-env-node /user_code/node_modules /user_code/node_modules
 COPY --from=build-env-dotnet /user_code/lib /user_code/lib
 ```
 
-but build the donet locally for deployment:
+but build the other components with docker:
+```
+ docker build -t docker_tmp .
+
+ docker cp `docker create docker_tmp`:/user_code/lib .
+ docker cp `docker create docker_tmp`:/user_code/node_modules .
+```
+
+After that, build dotnet locally
 ```
 dotnet restore -r ubuntu.14.04-x64
 dotnet publish -c Release -r ubuntu.14.04-x64 -o bin/
 chmod u+x bin/mainapp
 ```
+
+Then just deploy as shown above
+
 
 ## Appendix
 
