@@ -3,7 +3,7 @@ ADD . /user_code
 WORKDIR /user_code
 RUN npm install --save local_modules/execer
 
-FROM microsoft/dotnet:2.1-sdk AS build-env-dotnet
+FROM microsoft/dotnet:2.0.0-sdk AS build-env-dotnet
 ADD . /user_code
 WORKDIR /user_code
 RUN dotnet restore -r ubuntu.14.04-x64

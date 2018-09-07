@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace ConsoleApplication
 {
     public class Program
@@ -17,15 +15,15 @@ namespace ConsoleApplication
 
             var config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .AddEnvironmentVariables()
+            .AddJsonFile("appsettings.json")     
+            .AddEnvironmentVariables()            
             .Build();
-
-            //LoggerFactory loggerFactory = new LoggerFactory(config.GetSection("Logging"));
-            LoggerFactory loggerFactory = new LoggerFactory();
+            
+            LoggerFactory loggerFactory = new LoggerFactory(config.GetSection("Logging"));
             loggerFactory.AddConsole();
             ILogger logger = loggerFactory.CreateLogger<Program>();
-            logger.LogInformation("Hello World!");
+
+            logger.LogInformation("Hello World!");                    
 
             var host = new WebHostBuilder()
             .UseConfiguration(config)
@@ -43,24 +41,23 @@ namespace ConsoleApplication
                             logger.LogDebug("Using LD_LIBRARY_PATH: " + env_var);
                             logger.LogDebug("Setting kestrel ListenHandler to fd >>>>>>>> " + fds);
                             ulong fd = Convert.ToUInt64(fds);
-                            options.ListenHandle(fd);
-                            break;
-                        }
-                    }
+                            options.ListenHandle(fd); 
+                            break;                     
+                        }                      
+                    }       
                 }
                 catch (System.IndexOutOfRangeException e)
                 {
                     logger.LogError("Provided filedescriptor argument but unable to parse descriptor list " + e);
                 }
                 catch (Exception ex) {
-                    logger.LogCritical(ex.Message);
+                    logger.LogCritical(ex.Message);                    
                 }
-
+                
             })
             .ConfigureLogging((context, factory) =>
               {
-                    //factory.UseConfiguration(context.Configuration.GetSection("Logging"));
-                    factory.AddConfiguration(context.Configuration.GetSection("Logging"));
+                    factory.UseConfiguration(context.Configuration.GetSection("Logging"));
                     factory.AddConsole();
               })
             .UseStartup<Startup>()
